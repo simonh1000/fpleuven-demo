@@ -9,7 +9,9 @@ Elm dev environment with hot-loading (i.e. state is retained as you edit your co
 Click [here](
 https://secure.meetup.com/oauth2/authorize?client_id=nsslb8dhan5tm2sklc33rdt6e2&response_type=token&redirect_uri=http://localhost:3000)
 
-Authorise the app, and then copy the token in the redirect `access_token=**c2551192279670d376393d33b88a16bc**&token_type=bearer&expires_in=3600`
+Authorise the app, and then copy the token in the redirect:
+
+`access_token=`**c2551192279670d376393d33b88a16bc**`&token_type=bearer&expires_in=3600`
 
 to line 12 of the app
 
