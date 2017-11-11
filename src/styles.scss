@@ -1,0 +1,25 @@
+body {
+    background-color: #ddd;
+    & {
+        margin-top: 20px;
+    }
+    .people {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .person.card {
+        display: inline-flex;
+        width: 15em;
+        margin: 15px;
+        padding: 10px;
+        img {
+            object-fit: contain;
+            height: 170px;
+        }
+    }
+}
+
+.flex-start {
+    align-items: flex-start;
+}
