@@ -1,9 +1,8 @@
-module Main exposing (main)
+module Demo exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Json.Decode as Json
 import Http
 import List
 import Set exposing (Set)
@@ -11,7 +10,7 @@ import Set exposing (Set)
 
 token : String
 token =
-    "b62f5e0aba0a4a8fceba74bc4438e2cd"
+    "2057ddb2ec26868c010430aa5beec9dc"
 
 
 main : Program Never Model Msg
@@ -38,24 +37,26 @@ type alias Model =
     }
 
 
+{-| A person has a name, location and possibly a photo.
+Dummy data with this structure available at dummyData
+-}
 type alias Person =
-    { name : String
-    , city : String
-    , photo : Maybe String
-    }
+    String
 
 
+{-| on init we need to get data from Meetup
+-}
 init : ( Model, Cmd Msg )
 init =
     let
         model =
-            { members = dummyData
+            { members = []
             , attendees = Set.empty
             , errorMessage = ""
             , token = token
             }
     in
-        ( model, getMemberList model.token )
+        ( model, Cmd.none )
 
 
 
@@ -64,36 +65,17 @@ init =
 -- ------------------------------
 
 
+{-| Need to handle click events
+-}
 type Msg
-    = Attending Int
-    | NotAttending Int
-    | MemberData (Result Http.Error (List Person))
+    = MemberData (Result Http.Error (List Person))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        Attending idx ->
-            ( { model | attendees = Set.insert idx model.attendees }
-            , Cmd.none
-            )
-
-        NotAttending idx ->
-            ( { model | attendees = Set.remove idx model.attendees }
-            , Cmd.none
-            )
-
         MemberData data ->
-            case data of
-                Ok members ->
-                    ( { model | errorMessage = "", members = members }
-                    , Cmd.none
-                    )
-
-                Err err ->
-                    ( { model | errorMessage = toString err }
-                    , Cmd.none
-                    )
+            ( model, Cmd.none )
 
 
 
@@ -113,7 +95,8 @@ view model =
         , viewMembers model
         , text model.errorMessage
         , footer []
-            [ a [ href "http://www.freepik.com" ] [ text "Icons made by Freepik" ] ]
+            [ a [ href "http://www.freepik.com" ] [ text "Icons made by Freepik" ]
+            ]
         ]
 
 
@@ -126,23 +109,17 @@ viewMembers model =
                 |> List.partition (\( idx, _ ) -> Set.member idx model.attendees)
     in
         div [ class "members row" ]
-            [ div [ class "col-sm-6 people" ] (List.map (viewPerson Attending) members)
-            , div [ class "col-sm-6 people" ] (List.map (viewPerson NotAttending) attendees)
+            [ div [ class "col-sm-6 people" ] [ text "List of members" ]
+            , div [ class "col-sm-6 people" ] [ text "List of attendees" ]
             ]
 
 
 viewPerson : (Int -> Msg) -> ( Int, Person ) -> Html Msg
 viewPerson toggler ( idx, person ) =
     div [ class "person card", onClick (toggler idx) ]
-        [ case person.photo of
-            Just photo ->
-                img [ src photo, class "card-img-top" ] []
-
-            Nothing ->
-                img [ src "person.svg", class "card-img-top" ] []
+        [ img [ src "person.svg", class "card-img-top" ] []
         , div [ class "card-block" ]
-            [ h3 [ class "card-title" ] [ text <| toString (idx + 1) ++ " " ++ person.name ]
-            , p [ class "card-text" ] [ text person.city ]
+            [ h3 [ class "card-title" ] [ text <| toString (idx + 1) ++ " " ++ person ]
             ]
         ]
 
@@ -155,13 +132,12 @@ viewPerson toggler ( idx, person ) =
 
 getMemberList : String -> Cmd Msg
 getMemberList token =
-    Http.get (meetupUrl token) decodeData
-        |> Http.send MemberData
+    Cmd.none
 
 
 meetupUrl : String -> String
-meetupUrl token =
-    "https://api.meetup.com/2/members?" ++ query ++ "&access_token=" ++ token
+meetupUrl key =
+    "https://api.meetup.com/2/members?" ++ query ++ "&access_token=" ++ key
 
 
 query : String
@@ -173,30 +149,26 @@ query =
 -- ------------------------------
 -- JSON Decoding
 -- ------------------------------
-
-
-decodeData : Json.Decoder (List Person)
-decodeData =
-    Json.field "results" <| Json.list decodePerson
-
-
-decodePerson : Json.Decoder Person
-decodePerson =
-    Json.map3 Person
-        (Json.field "name" Json.string)
-        (Json.field "city" Json.string)
-        (Json.maybe <| Json.at [ "photo", "photo_link" ] Json.string)
-
-
-
+-- decodeData : Json.Decoder (List Person)
+-- decodeData =
+--     Json.field "results" <| Json.list decodePerson
+--
+--
+-- decodePerson : Json.Decoder Person
+-- decodePerson =
+--     Json.map3 Person
+--         (Json.field "name" Json.string)
+--         (Json.field "city" Json.string)
+--         (Json.maybe <| Json.at [ "photo", "photo_link" ] Json.string)
 -- Dummy initial data
-
-
-dummyData : List Person
-dummyData =
-    List.map mkPerson (List.range 1 5)
-
-
-mkPerson : Int -> Person
-mkPerson idx =
-    Person ("Fred" ++ toString idx) "Leuven" Nothing
+-- dummyData : List Person
+-- dummyData =
+--     List.map mkPerson (List.range 1 5)
+--
+--
+-- mkPerson : Int -> Person
+-- mkPerson idx =
+--     { name = "Fred" ++ toString idx
+--     , city = "Leuven"
+--     , photo = Nothing
+--     }
