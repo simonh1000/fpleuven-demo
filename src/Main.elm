@@ -9,14 +9,9 @@ import List
 import Set exposing (Set)
 
 
-token : String
-token =
-    "b62f5e0aba0a4a8fceba74bc4438e2cd"
-
-
-main : Program Never Model Msg
+main : Program String Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , update = update
         , view = view
@@ -45,11 +40,11 @@ type alias Person =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : String -> ( Model, Cmd Msg )
+init token =
     let
         model =
-            { members = dummyData
+            { members = []
             , attendees = Set.empty
             , errorMessage = ""
             , token = token

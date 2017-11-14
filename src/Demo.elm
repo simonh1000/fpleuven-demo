@@ -8,14 +8,9 @@ import List
 import Set exposing (Set)
 
 
-token : String
-token =
-    "2057ddb2ec26868c010430aa5beec9dc"
-
-
-main : Program Never Model Msg
+main : Program String Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , update = update
         , view = view
@@ -46,8 +41,8 @@ type alias Person =
 
 {-| on init we need to get data from Meetup
 -}
-init : ( Model, Cmd Msg )
-init =
+init : String -> ( Model, Cmd Msg )
+init token =
     let
         model =
             { members = []
@@ -68,13 +63,13 @@ init =
 {-| Need to handle click events
 -}
 type Msg
-    = MemberData (Result Http.Error (List Person))
+    = NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        MemberData data ->
+        NoOp ->
             ( model, Cmd.none )
 
 
@@ -87,7 +82,7 @@ update message model =
 view : Model -> Html Msg
 view model =
     div [ class "container-fluid" ]
-        [ h1 [] [ text "Functional Programming Leuven" ]
+        [ h1 [] [ text "Functional Programming Leuven: Elm" ]
         , div [ class "row" ]
             [ div [ class "col-sm-6 people" ] [ h4 [] [ text "Members" ] ]
             , div [ class "col-sm-6" ] [ h4 [] [ text "Attendees" ] ]

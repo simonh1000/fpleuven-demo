@@ -13,7 +13,7 @@ Authorise the app, and then copy the token in the redirect:
 
 `access_token=`**c2551192279670d376393d33b88a16bc**`&token_type=bearer&expires_in=3600`
 
-to line 12 of the app
+to index.js
 
 
 ## Installation
